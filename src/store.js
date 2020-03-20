@@ -1,24 +1,23 @@
-import { createStore } from 'redux'
-import { createAction, createReducer, configureStore } from "@reduxjs/toolkit"
-
-const addTodo = createAction("Add")
-const deleteTodo = createAction("Delete")
+import { createAction, createReducer, configureStore, createSlice } from "@reduxjs/toolkit"
 
 
-// createReducer을 사용하면 state를 mutate 해도 된다
-// 단! mutate를 할때는 return을 하면 안된다
-const reducer = createReducer([], {
-  [addTodo]: (state, action) => {
-    state.push({ text: action.payload, id: Date.now() })
-  },
-  [deleteTodo]: (state, action) => {
-    return state.filter(toDo => toDo.id !== action.payload)
+// createSlice는 reducer, action, initial 등 모두 제공해줌
+const toDos = createSlice({
+  name: 'toDosReducer',
+  initialState: [],
+  reducers: {
+    add: (state, action) => {
+      state.push({ text: action.payload, id: Date.now() })
+    },
+    remove: (state, action) => {
+      return state.filter(toDo => toDo.id !== action.payload)
+    }
   }
 })
 
-const store = configureStore({reducer})
+// configureStore을 사용하면 redux dev tool을 사용가능하다
+const store = configureStore({reducer: toDos.reducer})
 
-export const actionCreators = {
-  addTodo, deleteTodo
-}
+export const { add, remove } = toDos.actions
+
 export default store
